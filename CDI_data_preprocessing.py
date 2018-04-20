@@ -7,26 +7,64 @@ import seaborn as sns
 # Importing the dataset
 dataset = pd.read_csv('U.S._Chronic_Disease_Indicators.csv')
 
-
 #############################
 # sub-dataset based on topic
 #############################
 dataset_Alcohol = dataset.loc[(dataset["Topic"]=="Alcohol")]
 dataset_Arthritis = dataset.loc[(dataset["Topic"]=="Arthritis")]
 dataset_Asthma = dataset.loc[(dataset["Topic"]=="Asthma")]
+dataset_Cancer = dataset.loc[(dataset["Topic"]=="Cancer")]
+dataset_Diabetes = dataset.loc[(dataset["Topic"]=="Diabetes")]
+dataset_Overarching_Conditions = dataset.loc[(dataset["Topic"]=="Overarching Conditions")]
+dataset_Tobacco = dataset.loc[(dataset["Topic"]=="Tobacco")]
+dataset_Chronic_Kidney_Disease = dataset.loc[(dataset["Topic"]=="Chronic Kidney Disease")]
+dataset_Chronic_Obstructive_Pulmonary_Disease = dataset.loc[(dataset["Topic"]=="Chronic Obstructive Pulmonary Disease")]
+dataset_Cardiovascular_Disease = dataset.loc[(dataset["Topic"]=="Cardiovascular Disease")]
+dataset_Immunization = dataset.loc[(dataset["Topic"]=="Immunization")]
+dataset_Mental_Health = dataset.loc[(dataset["Topic"]=="Mental Health")]
+dataset_Nutrition = dataset.loc[(dataset["Topic"]=="Nutrition")]
+dataset_Physical_Activity = dataset.loc[(dataset["Topic"]=="Physical Activity")]
+dataset_and_Weight_Status = dataset.loc[(dataset["Topic"]=="and Weight Status")]
+dataset_Reproductive_Health = dataset.loc[(dataset["Topic"]=="Reproductive Health")]
+dataset_Oral_Health = dataset.loc[(dataset["Topic"]=="Oral Health")]
+dataset_Older_Adults = dataset.loc[(dataset["Topic"]=="Older Adults")]
+dataset_Disability = dataset.loc[(dataset["Topic"]=="Disability")]
 
-###################
-# plot variable by state
-###################
+#######################################
+# sub_datasets with specific condition
+#######################################
+dataset_Cancer_WA = dataset_Cancer.loc[(dataset_Cancer["LocationAbbr"] == "WA") &\
+                                       (dataset_Cancer["Stratification1"] != "Overall")]
+dataset_Cancer_all = dataset_Cancer.loc[(dataset_Cancer["DataValueType"] == "Age-adjusted Prevalence")]
+###################################################
+#plot cancer for all state
+###################################################
+ax = sns.factorplot(x="LocationAbbr", y="DataValueAlt", \
+               data=dataset_Cancer_all[(dataset_Cancer_all.YearStart.notnull()) & (dataset_Cancer_all.DataValueAlt.notnull())],\
+               hue = "YearStart", row = "Question", col = "DataValueType" ,\
+               kind="bar", size = 40, aspect = 0.9, legend = True)
+plt.setp(ax.get_xticklabels(), rotation=45)
+sns.set(font_scale = 1)
 
-ax = sns.boxplot(x="LocationAbbr", y="DataValueAlt", data=dataset_Arthritis)
-ax = sns.boxplot(x="LocationAbbr", y="DataValueAlt", data=dataset_Asthma)
-ax = sns.boxplot(x="LocationAbbr", y="DataValueAlt", data=dataset_Alcohol)
+
+
+##################################################
+#plot cancer data set for WA state
+###################################################
+
+sns.factorplot(x="YearStart", y="DataValueAlt",\
+               data=dataset_Cancer_WA[dataset_Cancer_WA.DataValueAlt.notnull()],\
+               hue = "Stratification1", row = "Question", col = "DataValueType" ,\
+               kind="bar", size = 20, aspect = 0.8, legend = True, margin_titles = True)
+sns.set(font_scale = 1)
+
+
+fig, ax = plt.subplots(1, 1, figsize=(50,50))
+plt.setp(ax.get_xticklabels(), rotation=45)
+
+ax = sns.barplot(x="YearStart", y="DataValueAlt", data=dataset_Cancer_WA, hue = "Stratification1")
+ax = sns.barplot(x="YearStart", y="DataValueAlt", data=dataset_Cancer_WA, hue = "DataValueType")
 show.plt
-
-
-
-#dataset_Alcohol.boxplot(column="DataValueAlt",by="LocationAbbr" )
 
 
 X = dataset.iloc[:, 0:4].values
